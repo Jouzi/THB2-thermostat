@@ -401,3 +401,14 @@ It does not guarantee:
 - protection against every BLE attack model
 
 For ordinary home telemetry privacy, it is still a sensible feature and worth enabling.
+
+## Thermostat setpoint
+
+The firmware also supports a separate thermostat setpoint value that can be stored in the device and read back over BLE.
+
+- Range: `4.0 .. 28.0 C`
+- Step: `0.5 C`
+- Default: `21.0 C`
+- On LCD models, the small numeric field can alternate between humidity and this setpoint
+
+If you need to read or write that value from a computer, use [`th05_setpoint.py`](../th05_setpoint.py). Full details and examples are in [thermostat-setpoint.md](./thermostat-setpoint.md).

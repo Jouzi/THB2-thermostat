@@ -28,6 +28,8 @@ All firmware supports any of these sensors: [CHT8215](https://github.com/pvvx/pv
 
 **Software for setting up and making BLE OTA: [PHY62x2BTHome.html](https://pvvx.github.io/THB2/web/PHY62x2BTHome.html).**
 
+**Thermostat setpoint notes and CLI usage:** [docs/thermostat-setpoint.md](docs/thermostat-setpoint.md)
+
 * The OTA protocol used is not part of the PHY SDK, but is designed specifically for custom firmware. This protocol, bootloader, and Flash area allocation scheme are incompatible with other PHY62x2 devices built on the [original SDK](https://github.com/pvvx/PHY62x2). The SDK used has been completely redesigned and has full sources for building in GCC.
   
 > Uploading OTA files to [PHY62x2BTHome.html](https://pvvx.github.io/THB2/web/PHY62x2BTHome.html) is automatic. You don't need to download files from this repository for OTA.
@@ -88,6 +90,7 @@ The sensors are detected automatically, but have different ports depending on th
 
 * BLE advertisement interval in [BTHome v2](https://bthome.io) format is 5 seconds.
 * Humidity and temperature sensor is polled every second BLE advertisement interval - period of 10 seconds.
+* On screen models, the small numeric field can alternate between humidity and the thermostat setpoint.
 * Battery voltage measurement is done every minute.
 * Recording of history every 30 minutes.
 * The button is used for quick connection to old BT adapters. Pressing the button switches the BLE advertising interval to a shorter period (1562.5ms). The action will continue for 60 seconds, then the interval will be restored to the one set in the settings.
@@ -279,6 +282,16 @@ It is possible to switch to inverse output control.
 
 The setting is made in [PHY62x2BTHome.html program](https://pvvx.github.io/THB2/web/PHY62x2BTHome.html).
 
+Firmware from commit `5ce53f4` also includes a dedicated thermostat setpoint stored in flash for devices with `SERVICE_THS`.
+
+* Range: `4.0 .. 28.0 C`
+* Resolution: `0.5 C`
+* Default: `21.0 C`
+* Persistence: saved in EEP and restored after reboot
+* Display: on LCD models, the small numeric field alternates between humidity and setpoint every 4 seconds when `Show setpoint` is enabled
+
+The setpoint is available through BLE command `0x57` on the command characteristic and can be read or changed from a host tool. A reference Python client is included as [`th05_setpoint.py`](th05_setpoint.py). See [docs/thermostat-setpoint.md](docs/thermostat-setpoint.md) for protocol details, examples, and troubleshooting.
+
 Output operation is assigned by setting the hysteresis value:
 
 * If the hysteresis value is zero, there will be no switching.
@@ -317,3 +330,27 @@ Run the script directly to start the auto time sync service:
 ```
 python auto_time_sync.py
 ```
+
+## Setpoint Tool
+
+The repository now includes a BLE helper script, [`th05_setpoint.py`](th05_setpoint.py), for reading or updating the thermostat setpoint without using the web UI.
+
+Install Python dependencies first:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+Read the current setpoint:
+
+```bash
+python3 th05_setpoint.py 40:B7:FC:19:2F:78 get
+```
+
+Set a new setpoint in Celsius:
+
+```bash
+python3 th05_setpoint.py 40:B7:FC:19:2F:78 set 22.5
+```
+
+The script connects to characteristic `0xFFF4`, sends command `0x57`, and prints the stored setpoint, version counter, allowed range, and active display unit. Full notes are in [docs/thermostat-setpoint.md](docs/thermostat-setpoint.md).
