@@ -30,6 +30,8 @@ All firmware supports any of these sensors: [CHT8215](https://github.com/pvvx/pv
 
 **Thermostat setpoint notes and CLI usage:** [docs/thermostat-setpoint.md](docs/thermostat-setpoint.md)
 
+**TH05F three-button input design notes:** [docs/th05f-three-button-input.md](docs/th05f-three-button-input.md)
+
 * The OTA protocol used is not part of the PHY SDK, but is designed specifically for custom firmware. This protocol, bootloader, and Flash area allocation scheme are incompatible with other PHY62x2 devices built on the [original SDK](https://github.com/pvvx/PHY62x2). The SDK used has been completely redesigned and has full sources for building in GCC.
   
 > Uploading OTA files to [PHY62x2BTHome.html](https://pvvx.github.io/THB2/web/PHY62x2BTHome.html) is automatic. You don't need to download files from this repository for OTA.
