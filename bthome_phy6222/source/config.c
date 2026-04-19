@@ -40,6 +40,7 @@
 #include "sbp_profile.h"
 #include "logger.h"
 #include "trigger.h"
+#include "setpoint.h"
 
 extern gapPeriConnectParams_t periConnParameters;
 
@@ -49,7 +50,7 @@ work_parm_t wrk;
 adv_work_t adv_wrk;
 
 const cfg_t def_cfg = {
-		.flg = FLG_MEAS_NOTIFY | FLG_SHOW_SMILEY,
+		.flg = FLG_MEAS_NOTIFY | FLG_SHOW_SMILEY | FLG_SHOW_SETPOINT,
 		.rf_tx_power = RF_PHY_TX_POWER_MAX, // RF_PHY_TX_POWER_0DBM,
 		.adv_event_cnt = 16,
 		.advertising_interval = DEF_ADV_INERVAL/100, // 80 * 62.5 = 5000 ms
@@ -178,6 +179,9 @@ void load_eep_config(void) {
 #if (OTA_TYPE == OTA_TYPE_APP) && ((DEV_SERVICES & SERVICE_TH_TRG) || (DEV_SERVICES & SERVICE_SCREEN))
 		memcpy(&trg, &def_trg, sizeof(trg));
 #endif
+#if (DEV_SERVICES & SERVICE_THS)
+		setpoint_reset_defaults();
+#endif
 	} else {
 		if (flash_read_cfg(&cfg, EEP_ID_CFG, sizeof(cfg)) != sizeof(cfg))
 			memcpy(&cfg, &def_cfg, sizeof(cfg));
@@ -199,6 +203,9 @@ void load_eep_config(void) {
 #if (DEV_SERVICES & SERVICE_FINDMY)
 		flash_read_cfg(findmy_key, EEP_ID_FDK, sizeof(findmy_key));
 #endif
+#if (DEV_SERVICES & SERVICE_THS)
+		setpoint_load();
+#endif
 	}
 #if (DEV_SERVICES & SERVICE_HISTORY)
 	memo_init();
@@ -210,4 +217,3 @@ void load_eep_config(void) {
 void save_config(void) {
 	flash_write_cfg(&cfg, EEP_ID_CFG, sizeof(cfg));
 }
-

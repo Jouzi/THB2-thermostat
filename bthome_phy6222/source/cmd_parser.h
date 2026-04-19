@@ -47,6 +47,7 @@ typedef enum {
 	CMD_ID_HXC      = 0x49, // Get/Set HX71X config
 	CMD_ID_CFG      = 0x55,	// Get/Set device config
 	CMD_ID_CFG_DEF  = 0x56,	// Set default device config
+	CMD_ID_SETPOINT = 0x57, // Get/Set thermostat setpoint (0.5 C step, 4..28 C)
 	CMD_ID_LCD_DUMP = 0x60, // Get/Set lcd buf
 	CMD_ID_LCD_FLG  = 0x61, // Start/Stop notify lcd dump and ...
 	CMD_ID_PINCODE  = 0x70, // Set new PinCode 0..999999

@@ -33,6 +33,7 @@
 #include "buzzer.h"
 #include "bthome_beacon.h"
 #include "findmy_beacon.h"
+#include "setpoint.h"
 /*********************************************************************/
 
 extern gapPeriConnectParams_t periConnParameters;
@@ -198,6 +199,19 @@ int cmd_parser(uint8_t * obuf, uint8_t * ibuf, uint32_t len) {
 			save_config();
 			memcpy(&obuf[1], &cfg, sizeof(cfg));
 			olen = sizeof(cfg) + 1;
+#if (OTA_TYPE == OTA_TYPE_APP) && (DEV_SERVICES & SERVICE_THS)
+		} else if (cmd == CMD_ID_SETPOINT) { // Get/Set thermostat setpoint
+			if (len > 1) {
+				(void) setpoint_set_c_x2(ibuf[1]);
+			}
+			obuf[1] = setpoint_cfg.setpoint_c_x2;
+			obuf[2] = setpoint_cfg.version & 0xff;
+			obuf[3] = (setpoint_cfg.version >> 8) & 0xff;
+			obuf[4] = SETPOINT_C_X2_MIN;
+			obuf[5] = SETPOINT_C_X2_MAX;
+			obuf[6] = (cfg.flg & FLG_SHOW_TF) ? 1 : 0;
+			olen = 7;
+#endif
 #if (DEV_SERVICES & SERVICE_THS)
 		} else if (cmd == CMD_ID_CFS) {	// Get/Set sensor config
 			if (--len > sizeof(thsensor_cfg.coef))

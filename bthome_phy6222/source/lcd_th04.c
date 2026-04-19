@@ -15,6 +15,7 @@
 #include "sensors.h"
 #include "lcd.h"
 #include "thb2_peripheral.h"
+#include "setpoint.h"
 
 #define LCD_I2C_ADDR	0x3E
 #define I2C_WAIT_ms		1
@@ -261,7 +262,10 @@ static void chow_measure(void) {
 	int16_t h = (measured_data.humi + 50)/100;
 	if(h > 99)
 		h = 99;
-	show_small_number(h, true);
+	if (setpoint_lcd_show_now())
+		show_small_number(setpoint_lcd_value(), false);
+	else
+		show_small_number(h, true);
 	show_battery_symbol(measured_data.battery < 20);
 #if (OTA_TYPE == OTA_TYPE_APP)
 	if(cfg.flg & FLG_SHOW_SMILEY) {

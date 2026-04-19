@@ -619,6 +619,7 @@ extern const cfg_t def_cfg;
 #define FLG_SHOW_TF			0x00000040	// Show temperature in F.
 #define FLG_FINDMY			0x00000080	// FindMy
 #define FLG_DISPLAY_SLEEP	0x00000100  // Switch off display after 60 seconds, Re-enable after key press.
+#define FLG_SHOW_SETPOINT	0x00000200	// Alternate humidity with thermostat setpoint on LCD
 
 typedef struct _adv_work_t {
 	uint32_t	measure_interval_ms;
